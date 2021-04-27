@@ -1,0 +1,33 @@
+.all-wrapper {
+    width: 100vw;
+    min-height: 100vh;
+    box-sizing: border-box;
+    overflow: hidden;
+    padding: 16px 16px 0;
+    background-color: #000;
+    color: #ffffff;
+}
+
+.no-content-wrapper {
+    width: 100vw;
+    min-height: calc(100vh - 80px);
+    box-sizing: border-box;
+    overflow: hidden;
+    padding: 16px 16px 0;
+    background-color: #F5F5F5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color:#626675;
+    font-size: 22px;
+}
+
+
+.network-wrapper {
+    width: 100vw;
+    padding: 0 50px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

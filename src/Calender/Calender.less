@@ -1,0 +1,37 @@
+.calender {
+    width: 100vw;
+    min-height: 45%;
+    position: relative;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    .dates-area {
+        min-width: 400px;
+        min-height: 300px;
+        padding: 10px 0;
+        box-sizing: border-box;
+        max-width: 60%;
+        .every-day {
+            display: inline-block;
+            vertical-align: top;
+            margin: 10px 15px;
+            height: 80px;
+            width: 80px;
+            text-align: center;
+            line-height: 80px;
+            font-size: 16px;
+            font-weight: 400;
+            border-radius: 5px;
+            background-color: rgb(0, 43, 43);
+            color: #fff;
+            cursor: pointer;
+            &:hover {
+                background-color: rgb(0, 85, 85);
+            }
+        }
+        .active-day {
+            background-color: rgb(0, 213, 213)!important;
+            color: #000!important;
+        }
+    }
+}
