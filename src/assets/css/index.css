@@ -32,13 +32,18 @@
             color: #000!important;
         }
     }
+    .left-block,
+    .right-block {
+        display: inline-block;
+        vertical-align: middle;
+    }
     .left-block {
         height: 100vh;
-        width: 60vw;
+        width: 60%;
     }
     .right-block {
         height: 100vh;
-        width: 40vw;
+        width: 40%;
         .every-circle {
             height: 50vh;
             width: 100%;

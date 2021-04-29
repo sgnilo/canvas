@@ -19,10 +19,10 @@ function App(props) {
     }
 
     const onChange = data => {
-        const {date: time, ratio_rb, ratio_tb} = data;
+        const {date: time, recv, send} = data;
         setDate(time);
-        setSendData(ratio_tb);
-        setRecvData(ratio_rb);
+        setSendData(send);
+        setRecvData(recv);
     }
 
     return <div className="all-wrapper">

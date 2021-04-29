@@ -33,7 +33,7 @@ const Calender = props => {
 
     const changeDate = current => {
         setActiveDay(current);
-        onchange && onchange(dates[current]);
+        onChange && onChange(dates[current]);
     };
 
     const tableProcess = obj => {
@@ -67,6 +67,7 @@ const Calender = props => {
             setDates(list);
             onChange && onChange(list[0]);
         }).catch(err => console.error(err));
+        console.log('?????', onChange)
     }, []);
 
     return <div className="calender">

@@ -62,6 +62,8 @@ const Tcp = props => {
         callSelf(data);
     }, []);
 
+    const width = (window.screen.width - 100) * 1.2
+
 
     return <LineTable
         tableConfig={tableConfig}
