@@ -4,11 +4,12 @@ import './Calender.less';
 
 const Calender = props => {
 
-    const {dates} = props;
+    const {dates, onchange} = props;
     const [activeDay, setActiveDay] = useState(0);
 
     const changeDate = current => {
         setActiveDay(current);
+        onchange && onchange(dates[current]);
     };
 
     useEffect(() => {
@@ -23,7 +24,6 @@ const Calender = props => {
                 </div>)
             })}
         </div>
-        {dates[activeDay] && <CircleTable data={dates[activeDay].info} />}
     </div>;
 };
 

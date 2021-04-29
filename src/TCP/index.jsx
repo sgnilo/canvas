@@ -44,7 +44,8 @@ const Tcp = props => {
         xList: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'],
         yList: [1, 2, 3, 4, 5],
         xName: '时间',
-        yName: '流量大小'
+        yName: '流量大小',
+        tableName: 'TCP流量实时监控'
     };
     const canvasOption = {
         ruleHeight: 5,
@@ -67,8 +68,8 @@ const Tcp = props => {
         canvasOption={canvasOption}
         tipOption={tipOption}
         data={data}
-        height={700}
-        width={900}
+        height={800}
+        width={1400}
     />
 };
 

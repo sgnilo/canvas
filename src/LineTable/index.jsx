@@ -18,7 +18,7 @@ const LineTable = props => {
     const endX = width - startX;
     const endY = 80;
     const startY = height - endY;
-    const {yList, xList, xName, yName} = tableConfig;
+    const {yList, xList, xName, yName, tableName} = tableConfig;
     let moveHandler = null;
 
     const [infos, setInfos] = useState({});
@@ -134,7 +134,7 @@ const LineTable = props => {
         });
         if (xName) {
             const text = context.measureText(xName);
-            context.fillText(xName, endX + 5, startY + 5);
+            context.fillText(xName, endX + 20, startY + 5);
         }
         fakeInfos.y = [];
         yList.forEach((item, index) => {
@@ -149,7 +149,13 @@ const LineTable = props => {
         });
         if (yName) {
             const text = context.measureText(yName);
-            context.fillText(yName, startX - (text.width / 2), endY - 5);
+            context.fillText(yName, startX - (text.width / 2), endY - 20);
+        }
+
+        if (tableName) {
+            const text = context.measureText(tableName);
+            context.fillText(tableName, (canvas.current.width / 2) - (text.width / 2), 20);
+
         }
 
         setInfos(fakeInfos);

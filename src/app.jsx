@@ -5,10 +5,14 @@ import Ajax from './util/request';
 import Calender from './Calender/index.jsx';
 import Tcp from './TCP/index.jsx';
 import Udp from './Udp/index.jsx';
+import CircleTable from './CircleTable/index.jsx';
 
 function App(props) {
 
     const [dates, setDates] = useState([]);
+    const [isTcp, setTcpState] = useState(true);
+    const [sendData, setSendData] = useState(null);
+    const [recvData, setRecvData] = useState(null);
 
 
     
@@ -82,12 +86,34 @@ function App(props) {
         setDates(tempDate);
     }, []);
 
+    const chooseOne = status => {
+        setTcpState(status);
+    }
+
+    const onChange = data => {
+        console.log(data);
+        setSendData(data);
+        setRecvData(data);
+    }
+
     
     return <div className="all-wrapper">
-        <Calender dates={dates} />
-        <div className="network-wrapper">
-            <Tcp />
-            <Udp />
+        <div className="choose-box">
+            <div className={`choose-item${isTcp ? ' active-item' : ''}`} onClick={() => chooseOne(true)}>TCP</div>
+            <div className={`choose-item${isTcp ? '' : ' active-item'}`} onClick={() => chooseOne(false)}>UDP</div>
+        </div>
+        <div className="left-block">
+            <Calender dates={dates} onChange={onChange} />
+            <div className="network-wrapper">
+                {isTcp ? <Tcp /> : <Udp />}
+            </div>
+        </div>
+        <div className="right-block">
+            {sendData && <div className="every-circle">
+                <CircleTable data={sendData} />
+                <p className="table-name">TCP流量分析扇形图1</p>
+            </div>}
+
         </div>
     </div>
 };
