@@ -8,9 +8,9 @@ const createXHR = () => {
     return ajax;
 };
 
-const preProcessRes = (res, resolve, reject) => {
-    res.errno ? reject(res.errno) : resolve(res);
-};
+// const preProcessRes = (res, resolve, reject) => {
+//     res.errno ? reject(res.errno) : resolve(res);
+// };
 
 const getUrlString = param => {
     const {url} = param;
@@ -30,9 +30,10 @@ export default {
                 xhr.open('GET', getUrlString(params));
                 xhr.onreadystatechange = () => {
                     if (xhr.readyState === 4 && xhr.status === 200) {
-                        preProcessRes(xhr.response, resolve, reject);
-                    } else {
-                        reject(xhr.response);
+                        // preProcessRes(xhr.response, resolve, reject);
+                        resolve(xhr.response)
+                    } else if (xhr.readyState === 4) {
+                        reject(xhr);
                     }
                 };
                 xhr.send();
@@ -49,7 +50,8 @@ export default {
                 xhr.open('POST', url);
                 xhr.onreadystatechange = () => {
                     if (xhr.readyState === 4 && xhr.status === 200) {
-                        preProcessRes(xhr.response, resolve, reject);
+                        // preProcessRes(xhr.response, resolve, reject);
+                        resolve(xhr.response)
                     } else {
                         reject(xhr.response);
                     }
@@ -70,7 +72,8 @@ export default {
             window[cbName] = res => {
                 document.body.removeChild(script);
                 delete window[cbName];
-                preProcessRes(res, resolve, reject);
+                // preProcessRes(res, resolve, reject);
+                resolve(res);
             };
         });
     }
