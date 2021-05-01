@@ -7,7 +7,8 @@ const LineTable = props => {
     const [moveStyle, setMoveStyle] = useState({});
     const [canvasStyle, setCanvasStyle] = useState({});
     const [tipName, setTipName] = useState('');
-    const [tipData, setTipData] = useState('');
+    const [tipSend, setTipSend] = useState('');
+    const [tipRecv, setTipRecv] = useState('');
     const [example, updateExample] = useState([]);
 
     const {height = 300, width = 400, canvasOption, data, tableConfig, tipOption} = props;
@@ -30,7 +31,7 @@ const LineTable = props => {
         context.lineWidth = 2
         const result = points.map(item => {
             const x = infos.x[item.x];
-            const y = startY - (item.y / infos.yMax) * (startY - endY) + infos.yMin * infos.yFreq;
+            const y = startY - (item.y / infos.yMax) * (startY - endY -infos.yFreq) + infos.yMin * infos.yFreq;
             return {x, y};
         });
         result.forEach((item, index) => {
@@ -66,10 +67,13 @@ const LineTable = props => {
         const {offsetX, offsetY} = e.nativeEvent;
         moveHandler = setTimeout(() => {
             const activeX = xList[Math.round((offsetX * renderSize - startX) / infos.xFreq)];
-            if (activeX !== tipName) {
-                const activeData = data.points.filter(item => item.x === activeX)[0]?.y;
-                setTipName(activeData ? new Date(activeX).toLocaleTimeString() : '--');
-                setTipData(activeData ? `${activeData}KB` : '--');
+            const date = typeof activeX === 'number' ? new Date(activeX).toLocaleTimeString() : '--';
+            if (date !== tipName) {
+                const sendY = data.sendLine.points.filter(item => item.x === activeX)[0]?.y?.toFixed(2);
+                const recvY = data.recvLine.points.filter(item => item.x === activeX)[0]?.y.toFixed(2);
+                setTipName(date);
+                setTipSend(sendY ? `${sendY}KB` : '--');
+                setTipRecv(recvY ? `${recvY}KB` : '--');
             }
             let realX, realY;
             if (offsetY < (endY / renderSize)) {
@@ -184,7 +188,7 @@ const LineTable = props => {
         drawTable();
         const {sendLine, recvLine} = data;
         drawLine(sendLine);
-        drawTable(recvLine);
+        drawLine(recvLine);
     }, [data, tableConfig]);
     
     return <div className="canvas-wrapper">
@@ -199,8 +203,9 @@ const LineTable = props => {
                     onMouseLeave={mouseLeave}
                 ></canvas>
                 {hasTip && <div className="line-tip" style={moveStyle} onMouseEnter={mouseEnter} onMouseLeave={mouseLeave}>
-                    <p>{canvasTipName || '名称'}：{tipName}</p>
-                    <p>{canvasTipData || '数据'}：{tipData}</p>
+                    <p>时间：{tipName}</p>
+                    <p>发送端：{tipSend}</p>
+                    <p>接收端：{tipRecv}</p>
                 </div>}
                 <div className="example">
 

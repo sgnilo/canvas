@@ -1,55 +1,73 @@
 import {useEffect, useState} from 'react';
+import Ajax from '../util/request';
 import LineTable from '../LineTable/index.jsx';
 
 const Udp = props => {
 
-    const [data, setData] = useState({
+    const [sendLine, setSendLine] = useState({
         lineColor: 'rgb(0, 255, 255)',
-        lineName: 'UDP',
-        points: [
-        {x: 'a', y: 1.5},
-        {x: 'b', y: 2.2},
-        {x: 'c', y: 3.3},
-        {x: 'd', y: 1.8},
-        {x: 'e', y: 4.5},
-        {x: 'f', y: 1.5},
-        {x: 'g', y: 2.2},
-        {x: 'h', y: 3.3},
-        {x: 'i', y: 1.8},
-        {x: 'j', y: 4.5},
-        {x: 'k', y: 1.5},
-        {x: 'l', y: 2.2},
-        {x: 'm', y: 3.3},
-        {x: 'n', y: 1.8}
-    ]});
+        lineName: '发送端',
+        points: []
+    });
 
+    const [recvLine, setRecvLine] = useState({
+        lineColor: '#f73131',
+        lineName: '接收端',
+        points: []
+    });
+
+    const [myList, setList] = useState([
+        0, 0.5, 1, 1.5, 2
+    ]);
 
     const [width, setWidth] = useState(1400);
     const [height, setHeight] = useState(700);
-
-    const callSelf = data => {
-        setTimeout(() => {
-            const points = data.points.map((item, index, list) => {
-                let newY;
-                if (list[index + 1]) {
-                    newY = list[index + 1].y;
-                } else {
-                    newY = (Math.random() * 5 + 1).toFixed(2);
-                }
-                return {...item, y: newY};
-            });
-            const newList = {...data, points};
-            setData(newList);
-           callSelf(newList);
-        }, 1000);
-    };
-
-    const tableConfig = {
-        xList: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'],
-        yList: [1, 2, 3, 4, 5],
+    const [tableConfig, setTableConfig] = useState({
+        xList: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o'],
+        yList: [0, 0.5, 1, 1.5, 2],
         xName: '时间',
-        yName: '流量大小'
+        yName: '流量大小(KB)',
+        tableName: 'UDP流量实时监控'
+    });
+
+    const callSelf = yList => {
+        let tempY = yList;
+        Ajax.get({url: 'http://192.168.8.8:8010/time/udp'}).then(res => {
+            const result = JSON.parse(res);
+            const {time, sum_rb, sum_tb} = result;
+            const sendPonits = sendLine.points;
+            const recvPoints = recvLine.points;
+            const tempConfig = {...tableConfig};
+            if (sendPonits.length >= 15) {
+                sendPonits.shift();
+            }
+            sendPonits.push({x: time, y: sum_tb});
+            if (recvPoints.length >= 15) {
+                recvPoints.shift();
+            }
+            recvPoints.push({x: time, y: sum_rb});
+            if (tempConfig.xList.length > 15) {
+                tempConfig.xList.shift()
+            };
+            tempConfig.xList.push(time);
+            const maxNewY = Math.max(sum_rb, sum_tb, ...sendPonits.map(item => item.y), ...recvPoints.map(item => item.y));
+            if ((yList[4] < maxNewY || maxNewY < yList[1]) && maxNewY) {
+                const freq = Math.ceil((maxNewY - yList[0]) / 4);
+                tempY = [];
+                for (let i = 0; i < 5; i++) {
+                    tempY.push(parseInt(freq * i));
+                }
+                tempConfig.yList = tempY;
+                setList(tempY)
+            }
+            setTableConfig({...tableConfig, ...tempConfig});
+            setSendLine({...sendLine, points: sendPonits});
+            setRecvLine({...recvLine, points: recvPoints});
+        });
+        setTimeout(() => callSelf(tempY), 1000);
     };
+
+    
     const canvasOption = {
         ruleHeight: 5,
         renderSize: window.devicePixelRatio || 1,
@@ -62,17 +80,16 @@ const Udp = props => {
 
 
     useEffect(() => {
-        callSelf(data);
+        callSelf(myList);
         setWidth((window.screen.width - 200) * 0.55 * (window.devicePixelRatio || 1));
         setHeight(400 * (window.devicePixelRatio || 1));
     }, []);
 
-
     return <LineTable
-        tableConfig={tableConfig}
+        tableConfig={{...tableConfig, yList: myList}}
         canvasOption={canvasOption}
         tipOption={tipOption}
-        data={data}
+        data={{sendLine, recvLine}}
         height={height}
         width={width}
     />

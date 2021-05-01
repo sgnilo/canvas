@@ -71,7 +71,7 @@ const CircleTable = props => {
             context.shadowBlur = 2;
             context.fillStyle = newPath.activeColor || newPath.color;
             setTipName(newPath.name);
-            setTipData((newPath.percent * 100) + '%');
+            setTipData((newPath.percent * 100).toFixed(2) + '%');
             context.fill(newPath.path);
             context.closePath();
         }

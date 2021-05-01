@@ -11,8 +11,8 @@
 }
 
 .line-tip {
-    height: 40px;
-    width: 100px;
+    min-height: 40px;
+    min-width: 100px;
     background: rgba(255, 255, 255, .8);
     border-radius: 4px;
     position: absolute;
@@ -27,6 +27,7 @@
     transition: all .3s;
     p {
         max-width: 100%;
+        white-space: nowrap;
         overflow: hidden;
     }
 }
