@@ -23,6 +23,10 @@ const Udp = props => {
         {x: 'n', y: 1.8}
     ]});
 
+
+    const [width, setWidth] = useState(1400);
+    const [height, setHeight] = useState(700);
+
     const callSelf = data => {
         setTimeout(() => {
             const points = data.points.map((item, index, list) => {
@@ -59,6 +63,8 @@ const Udp = props => {
 
     useEffect(() => {
         callSelf(data);
+        setWidth((window.screen.width - 200) * 0.55 * (window.devicePixelRatio || 1));
+        setHeight(400 * (window.devicePixelRatio || 1));
     }, []);
 
 
@@ -67,8 +73,8 @@ const Udp = props => {
         canvasOption={canvasOption}
         tipOption={tipOption}
         data={data}
-        height={800}
-        width={1400}
+        height={height}
+        width={width}
     />
 };
 

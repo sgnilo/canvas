@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import './assets/css/reset.css';
 import './assets/css/index.css';
-import Ajax from './util/request';
 import Calender from './Calender/index.jsx';
 import Tcp from './TCP/index.jsx';
 import Udp from './Udp/index.jsx';
@@ -45,11 +44,11 @@ function App(props) {
         <div className="right-block">
             {sendData && <div className="every-circle">
                 <CircleTable data={sendData} config={circleConfig} />
-                <p className="table-name">{date}TCP发送端流量分析扇形图</p>
+                <p className="table-name">{date}--{isTcp ? 'TCP' : 'UDP' }发送端流量占比扇形图</p>
             </div>}
             {recvData && <div className="every-circle">
-                <CircleTable data={sendData} config={circleConfig} />
-                <p className="table-name">{date}TCP接收端流量分析扇形图</p>
+                <CircleTable data={recvData} config={circleConfig} />
+                <p className="table-name">{date}--{isTcp ? 'TCP' : 'UDP' }接收端流量占比扇形图</p>
             </div>}
         </div>
     </div>
