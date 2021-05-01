@@ -67,6 +67,7 @@ const Calender = props => {
             setDates(list);
             onChange && onChange(list[0]);
         }).catch(err => console.error(err));
+        setActiveDay(0);
     }, [isTcp]);
 
     return <div className="calender">

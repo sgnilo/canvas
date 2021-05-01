@@ -56,8 +56,8 @@ const Udp = props => {
         showX: false
     };
     const tipOption = {
-        canvasTipName: 'x轴',
-        canvasTipData: 'y轴'
+        canvasTipName: '时间',
+        canvasTipData: '流量大小'
     }
 
 

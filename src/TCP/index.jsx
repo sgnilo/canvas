@@ -1,68 +1,80 @@
 import {useEffect, useState} from 'react';
+import Ajax from '../util/request';
 import LineTable from '../LineTable/index.jsx';
 
 const Tcp = props => {
 
-    const [data, setData] = useState({
+    const [sendLine, setSendLine] = useState({
         lineColor: 'rgb(0, 255, 255)',
-        lineName: 'TCP',
-        points: [
-        {x: 'a', y: 1.5},
-        {x: 'b', y: 2.2},
-        {x: 'c', y: 3.3},
-        {x: 'd', y: 1.8},
-        {x: 'e', y: 4.5},
-        {x: 'f', y: 1.5},
-        {x: 'g', y: 2.2},
-        {x: 'h', y: 3.3},
-        {x: 'i', y: 1.8},
-        {x: 'j', y: 4.5},
-        {x: 'k', y: 1.5},
-        {x: 'l', y: 2.2},
-        {x: 'm', y: 3.3},
-        {x: 'n', y: 1.8}
-    ]});
+        lineName: '发送端流量',
+        points: []
+    });
+
+    const [recvLine, setRecvLine] = useState({
+        lineColor: 'rgb(0, 44, 44)',
+        lineName: '接收端流量',
+        points: []
+    });
 
     const [width, setWidth] = useState(1400);
     const [height, setHeight] = useState(700);
-
-    const callSelf = data => {
-        setTimeout(() => {
-            const points = data.points.map((item, index, list) => {
-                let newY;
-                if (list[index + 1]) {
-                    newY = list[index + 1].y;
-                } else {
-                    newY = (Math.random() * 5 + 1).toFixed(2);
-                }
-                return {...item, y: newY};
-            });
-            const newList = {...data, points};
-            setData(newList);
-           callSelf(newList);
-        }, 1000);
-    };
-
-    const tableConfig = {
-        xList: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'],
-        yList: [1, 2, 3, 4, 5],
+    const [tableConfig, setTableConfig] = useState({
+        xList: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o'],
+        yList: [0, 50, 100, 150, 200],
         xName: '时间',
-        yName: '流量大小',
+        yName: '流量大小(KB)',
         tableName: 'TCP流量实时监控'
+    });
+
+    const callSelf = () => {
+        Ajax.get({url: 'http://192.168.8.8:8010/time/tcp'}).then(res => {
+            const result = JSON.parse(res);
+            const {time, sum_rb, sum_tb} = result;
+            const sendPonits = sendLine.points;
+            const recvPoints = recvLine.points;
+            const tempConfig = {...tableConfig};
+            if (sendPonits.length >= 15) {
+                sendPonits.unshift();
+            }
+            sendPonits.push({x: time, y: sum_tb});
+            if (recvPoints.length >= 15) {
+                recvPonits.unshift();
+            }
+            recvPoints.push({x: time, y: sum_rb});
+            if (tempConfig.xList.length > 15) {
+                tempConfig.xList.unshift()
+            };
+            tempConfig.xList.push(time);
+            const maxNewY = Matn.max(sum_rb, sum_tb);
+            if (tempConfig.yList[tempConfig.yList - 1] < maxNewY) {
+                const freq = (maxNewY - tempConfig.yList[0]) / 5;
+                const tempY = [];
+                for (let i = 0; i < 5; i++) {
+                    tempY.push(freq * i);
+                }
+                tempConfig.yList = tempY;
+            }
+            setTableConfig({...tableConfig, ...tempConfig});
+            setSendLine({...sendLine, points: sendPonits});
+            setRecvLine({...recvLine, points: recvPoints});
+        });
+        setTimeout(callSelf, 1000);
     };
+
+    
     const canvasOption = {
         ruleHeight: 5,
         renderSize: window.devicePixelRatio || 1,
         showX: false
     };
     const tipOption = {
-        canvasTipName: 'x轴',
-        canvasTipData: 'y轴'
+        canvasTipName: '时间',
+        canvasTipData: '流量大小'
     }
 
 
     useEffect(() => {
-        callSelf(data);
+        callSelf();
         setWidth((window.screen.width - 200) * 0.55 * (window.devicePixelRatio || 1));
         setHeight(400 * (window.devicePixelRatio || 1));
     }, []);
@@ -71,7 +83,7 @@ const Tcp = props => {
         tableConfig={tableConfig}
         canvasOption={canvasOption}
         tipOption={tipOption}
-        data={data}
+        data={{sendLine, recvLine}}
         height={height}
         width={width}
     />

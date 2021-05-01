@@ -35,15 +35,17 @@ const LineTable = props => {
         });
         result.forEach((item, index) => {
             const {x, y} = item;
-            context.beginPath();
-            context.arc(x, y, 1, 0, 2 * Math.PI);
-            context.stroke();
-            const next = result[index + 1];
-            if (next) {
+            if (y) {
                 context.beginPath();
-                context.moveTo(x, y);
-                context.lineTo(next.x, next.y);
+                context.arc(x, y, 1, 0, 2 * Math.PI);
                 context.stroke();
+                const next = result[index + 1];
+                if (next) {
+                    context.beginPath();
+                    context.moveTo(x, y);
+                    context.lineTo(next.x, next.y);
+                    context.stroke();
+                }
             }
         });
         if (!example.some(item => item.name === lineName)) {
@@ -66,8 +68,8 @@ const LineTable = props => {
             const activeX = xList[Math.round((offsetX * renderSize - startX) / infos.xFreq)];
             if (activeX !== tipName) {
                 const activeData = data.points.filter(item => item.x === activeX)[0]?.y;
-                setTipName(activeX);
-                setTipData(activeData);
+                setTipName(activeData ? new Date(activeX).toLocaleTimeString() : '--');
+                setTipData(activeData ? `${activeData}KB` : '--');
             }
             let realX, realY;
             if (offsetY < (endY / renderSize)) {
@@ -180,8 +182,10 @@ const LineTable = props => {
     useEffect(() => {
         clearAll();
         drawTable();
-        drawLine(data);
-    }, [data]);
+        const {sendLine, recvLine} = data;
+        drawLine(sendLine);
+        drawTable(recvLine);
+    }, [data, tableConfig]);
     
     return <div className="canvas-wrapper">
                 <canvas
