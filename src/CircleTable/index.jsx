@@ -3,9 +3,12 @@ import './CircleTable.less';
 
 const CircleTable = props => {
 
-    const {data} = props;
+    const {data, config} = props;
+    const {width = 600, height = 600, renderSize = 2} = config || {};
 
     const canvas = useRef();
+
+    const [style, setStyle] = useState({});
 
     const [rectList, setRectList] = useState([]);
     const [activePath, setActivePath] = useState(null);
@@ -22,9 +25,9 @@ const CircleTable = props => {
         list.forEach(item => {
             const p = new Path2D();
             context.beginPath();
-            p.moveTo(300, 300);
+            p.moveTo(width / 2, height / 2);
             context.fillStyle = item.color;
-            p.arc(300, 300, 300, tmp, tmp + item.percent * Math.PI * 2, false);
+            p.arc(width / 2, height / 2, width / 2, tmp, tmp + item.percent * Math.PI * 2, false);
             tmp += item.percent * Math.PI * 2;
             context.fill(p);
             context.closePath();
@@ -32,6 +35,13 @@ const CircleTable = props => {
         });
         setRectList(tempList);
     };
+
+    useEffect(() => {
+        setStyle({
+            height: height / renderSize,
+            width: width / renderSize
+        })
+    }, [config]);
 
     useEffect(() => {
         reDraw(data);
@@ -80,11 +90,12 @@ const CircleTable = props => {
         <canvas
             className="circle-canvas"
             ref={canvas}
-            height={600}
-            width={600}
+            height={height}
+            width={width}
             onMouseMove={mouseMove}
             onMouseEnter={mouseEnter}
             onMouseLeave={mouseLeave}
+            style={style}
         ></canvas>
         {hasTip && <div className="line-tip" style={moveStyle}>
             <p>{tipName}</p>

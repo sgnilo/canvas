@@ -27,7 +27,7 @@ const colorMap = [
 
 const Calender = props => {
 
-    const {onChange} = props;
+    const {onChange, isTcp} = props;
     const [activeDay, setActiveDay] = useState(0);
     const [dates, setDates] = useState([]);
 
@@ -61,14 +61,13 @@ const Calender = props => {
     };
 
     useEffect(() => {
-        Ajax.get({url: 'http://192.168.8.8:8010/all_time'}).then(res => {
+        Ajax.get({url: `http://192.168.8.8:8010/all_time/${isTcp ? 'tcp' : 'udp'}`}).then(res => {
             const result = JSON.parse(res);
             const list = preProcess(result);
             setDates(list);
             onChange && onChange(list[0]);
         }).catch(err => console.error(err));
-        console.log('?????', onChange)
-    }, []);
+    }, [isTcp]);
 
     return <div className="calender">
         <div className="dates-area">

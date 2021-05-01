@@ -25,24 +25,30 @@ function App(props) {
         setRecvData(recv);
     }
 
+    const circleConfig = {
+        height: 460,
+        width: 460,
+        renderSize: 2
+    }
+
     return <div className="all-wrapper">
         <div className="choose-box">
             <div className={`choose-item${isTcp ? ' active-item' : ''}`} onClick={() => chooseOne(true)}>TCP</div>
             <div className={`choose-item${isTcp ? '' : ' active-item'}`} onClick={() => chooseOne(false)}>UDP</div>
         </div>
         <div className="left-block">
-            <Calender onChange={onChange} />
+            <Calender onChange={onChange} isTcp={isTcp} />
             <div className="network-wrapper">
                 {isTcp ? <Tcp /> : <Udp />}
             </div>
         </div>
         <div className="right-block">
             {sendData && <div className="every-circle">
-                <CircleTable data={sendData} />
+                <CircleTable data={sendData} config={circleConfig} />
                 <p className="table-name">{date}TCP发送端流量分析扇形图</p>
             </div>}
             {recvData && <div className="every-circle">
-                <CircleTable data={sendData} />
+                <CircleTable data={sendData} config={circleConfig} />
                 <p className="table-name">{date}TCP接收端流量分析扇形图</p>
             </div>}
         </div>
